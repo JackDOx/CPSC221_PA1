@@ -183,9 +183,42 @@ unsigned int ImgList::GetDimensionFullX() const
  */
 ImgNode *ImgList::SelectNode(ImgNode *rowstart, int selectionmode)
 {
-    // add your implementation below
+    ImgNode *bestNode = rowstart->east;
+    double bestValue = 9999999; // Initialize with maximum possible value
 
-    return NULL;
+    // Start from the node next to the first node in the row and stop at the node before the last node
+    ImgNode *currentNode = rowstart->east;
+    while (currentNode->east)
+    {
+        // Compute the value based on the selection mode
+        double value = 0.0;
+        if (selectionmode == 0)
+        {
+            // Compute brightness: sum over the RGB color channels, multiplied by alpha
+            value = (currentNode->colour.r + currentNode->colour.g + currentNode->colour.b) * currentNode->colour.a;
+        }
+        else if (selectionmode == 1)
+        {
+            // Compute color difference with left neighbor and right neighbor
+            double leftDifference = currentNode->colour.distanceTo(currentNode->west->colour);
+            double rightDifference = currentNode->colour.distanceTo(currentNode->east->colour);
+            // Compute total color difference
+            value = leftDifference + rightDifference;
+        }
+
+        // Update the best node if the current node has a lower value
+        if (value < bestValue)
+        {
+            bestNode = currentNode;
+            bestValue = value;
+        }
+
+        // Move to the next node
+        currentNode = currentNode->east;
+    }
+
+    // Return the best node found
+    return bestNode;
 }
 
 /**
