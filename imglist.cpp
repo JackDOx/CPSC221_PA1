@@ -107,7 +107,16 @@ ImgList::ImgList(PNG &img)
 unsigned int ImgList::GetDimensionX() const
 {
     // replace the following line with your implementation
-    return -1;
+    unsigned int result = 0;
+    ImgNode *temp = this->northwest;
+
+    while (temp)
+    {
+        result += 1;
+        temp = temp->east;
+    };
+
+    return result;
 }
 
 /**
@@ -121,7 +130,16 @@ unsigned int ImgList::GetDimensionX() const
 unsigned int ImgList::GetDimensionY() const
 {
     // replace the following line with your implementation
-    return -1;
+    unsigned int result = 0;
+    ImgNode *temp = this->northwest;
+
+    while (temp)
+    {
+        result += 1;
+        temp = temp->south;
+    };
+
+    return result;
 }
 
 /**
@@ -134,7 +152,16 @@ unsigned int ImgList::GetDimensionY() const
 unsigned int ImgList::GetDimensionFullX() const
 {
     // replace the following line with your implementation
-    return -1;
+    unsigned int result = 0;
+    ImgNode *temp = this->northwest;
+
+    while (temp)
+    {
+        result += (temp->skipright + 1);
+        temp = temp->east;
+    };
+
+    return result;
 }
 
 /**
