@@ -3,7 +3,7 @@
  *  @description Contains partial implementation of ImgList class
  *               for CPSC 221 PA1
  *               Function bodies to be completed by student
- * 
+ *
  *  THIS FILE WILL BE SUBMITTED
  */
 
@@ -12,29 +12,90 @@
 #include <math.h> // provides fmax, fmin, and fabs functions
 
 /*********************
-* CONSTRUCTORS, ETC. *
-*********************/
+ * CONSTRUCTORS, ETC. *
+ *********************/
 
 /**
  * Default constructor. Makes an empty list
  */
-ImgList::ImgList() {
-    // set appropriate values for all member attributes here
-	
+ImgList::ImgList()
+{
+    this->northwest = nullptr;
+    this->southeast = nullptr;
 }
 
 /**
  * Creates a list from image data
  * @pre img has dimensions of at least 1x1
  */
-ImgList::ImgList(PNG& img) {
-    // build the linked node structure and set the member attributes appropriately
-	
+ImgList::ImgList(PNG &img)
+{
+
+    // Initialize northwest and southeast pointers
+
+    northwest = nullptr;
+    southeast = nullptr;
+
+    ImgNode *firstNodeUpperRow = nullptr;
+    ImgNode *tempNode = nullptr;
+
+    for (int y = 0; y < img.height(); y++)
+    {
+        ImgNode *prevNode = NULL; // Keep track of the previous node in the current row
+
+        for (int x = 0; x < img.width(); x++)
+        {
+            ImgNode *newNode = new ImgNode();
+
+            // Set the color of newNode based on the corresponding pixel in the input image
+            newNode->colour = *img.getPixel(x, y);
+
+            // Link newNode to the north and west nodes
+            if (prevNode)
+            {
+                prevNode->east = newNode;
+                newNode->west = prevNode;
+            }
+
+            if (y > 0 && firstNodeUpperRow)
+            {
+                // Find the corresponding node in the row above (north)
+                ImgNode *northNode = firstNodeUpperRow;
+                for (unsigned int i = 1; i <= x; i++)
+                {
+                    northNode = northNode->east;
+                }
+
+                newNode->north = northNode;
+                northNode->south = newNode;
+            }
+
+            // Update northwest if it's the first node in the list
+            if (x == 0 && y == 0)
+            {
+                northwest = newNode;
+            }
+
+            // Update prevNode for the next iteration
+            prevNode = newNode;
+
+            // Update southeast to point to the last node
+            southeast = newNode;
+
+            if (x == 0)
+            {
+                tempNode = newNode;
+            }
+        }
+
+        // Set first NodeUpper Row after the row ends, so it will be of the upper row
+        firstNodeUpperRow = tempNode;
+    }
 }
 
 /************
-* ACCESSORS *
-************/
+ * ACCESSORS *
+ ************/
 
 /**
  * Returns the horizontal dimension of this list (counted in nodes)
@@ -43,7 +104,8 @@ ImgList::ImgList(PNG& img) {
  * We expect your solution to take linear time in the number of nodes in the
  *   x dimension.
  */
-unsigned int ImgList::GetDimensionX() const {
+unsigned int ImgList::GetDimensionX() const
+{
     // replace the following line with your implementation
     return -1;
 }
@@ -56,7 +118,8 @@ unsigned int ImgList::GetDimensionX() const {
  * We expect your solution to take linear time in the number of nodes in the
  *   y dimension.
  */
-unsigned int ImgList::GetDimensionY() const {
+unsigned int ImgList::GetDimensionY() const
+{
     // replace the following line with your implementation
     return -1;
 }
@@ -68,7 +131,8 @@ unsigned int ImgList::GetDimensionY() const {
  * We expect your solution to take linear time in the number of nodes in the
  *   x dimension.
  */
-unsigned int ImgList::GetDimensionFullX() const {
+unsigned int ImgList::GetDimensionFullX() const
+{
     // replace the following line with your implementation
     return -1;
 }
@@ -90,9 +154,10 @@ unsigned int ImgList::GetDimensionFullX() const {
  * "colour difference" between two pixels can be determined
  * using the "distanceTo" function found in RGBAPixel.h.
  */
-ImgNode* ImgList::SelectNode(ImgNode* rowstart, int selectionmode) {
+ImgNode *ImgList::SelectNode(ImgNode *rowstart, int selectionmode)
+{
     // add your implementation below
-  
+
     return NULL;
 }
 
@@ -113,17 +178,18 @@ ImgNode* ImgList::SelectNode(ImgNode* rowstart, int selectionmode) {
  *             Like fillmode 1, use the smaller difference interval for hue,
  *             and the smaller-valued average for diametric hues
  */
-PNG ImgList::Render(bool fillgaps, int fillmode) const {
+PNG ImgList::Render(bool fillgaps, int fillmode) const
+{
     // Add/complete your implementation below
-  
-    PNG outpng; //this will be returned later. Might be a good idea to resize it at some point.
-  
+
+    PNG outpng; // this will be returned later. Might be a good idea to resize it at some point.
+
     return outpng;
 }
 
 /************
-* MODIFIERS *
-************/
+ * MODIFIERS *
+ ************/
 
 /**
  * Removes exactly one node from each row in this list, according to specified criteria.
@@ -135,9 +201,9 @@ PNG ImgList::Render(bool fillgaps, int fillmode) const {
  *       gaps are linked appropriately, and their skip values are updated to reflect
  *       the size of the gap.
  */
-void ImgList::Carve(int selectionmode) {
+void ImgList::Carve(int selectionmode)
+{
     // add your implementation here
-	
 }
 
 // note that a node on the boundary will never be selected for removal
@@ -154,11 +220,10 @@ void ImgList::Carve(int selectionmode) {
  *       gaps are linked appropriately, and their skip values are updated to reflect
  *       the size of the gap.
  */
-void ImgList::Carve(unsigned int rounds, int selectionmode) {
+void ImgList::Carve(unsigned int rounds, int selectionmode)
+{
     // add your implementation here
-	
 }
-
 
 /*
  * Helper function deallocates all heap memory associated with this list,
@@ -166,9 +231,9 @@ void ImgList::Carve(unsigned int rounds, int selectionmode) {
  * @post this list has no currently allocated nor leaking heap memory,
  *       member attributes have values consistent with an empty list.
  */
-void ImgList::Clear() {
+void ImgList::Clear()
+{
     // add your implementation here
-	
 }
 
 /**
@@ -177,12 +242,11 @@ void ImgList::Clear() {
  * @param otherlist - list whose contents will be copied
  * @post this list has contents copied from by physically separate from otherlist
  */
-void ImgList::Copy(const ImgList& otherlist) {
+void ImgList::Copy(const ImgList &otherlist)
+{
     // add your implementation here
-	
 }
 
 /*************************************************************************************************
-* IF YOU DEFINED YOUR OWN PRIVATE FUNCTIONS IN imglist-private.h, YOU MAY ADD YOUR IMPLEMENTATIONS BELOW *
-*************************************************************************************************/
-
+ * IF YOU DEFINED YOUR OWN PRIVATE FUNCTIONS IN imglist-private.h, YOU MAY ADD YOUR IMPLEMENTATIONS BELOW *
+ *************************************************************************************************/
